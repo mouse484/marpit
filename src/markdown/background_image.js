@@ -31,7 +31,11 @@ function backgroundImage(md) {
     'marpit_background_image',
     ({ tokens }) => {
       for (const t of tokens) {
-        if (t.type === 'image' && t.meta.marpitImage.options.includes('bg')) {
+        if (
+          t.meta &&
+          t.meta.marpitImage &&
+          t.meta.marpitImage.options.includes('bg')
+        ) {
           t.meta.marpitImage.background = true
           t.hidden = true
 
@@ -92,7 +96,7 @@ function backgroundImage(md) {
 
         if (current.open && tb.type === 'inline')
           for (const t of tb.children) {
-            if (t.type === 'image') {
+            if (t.meta && t.meta.marpitImage) {
               const {
                 background,
                 backgroundSize,
