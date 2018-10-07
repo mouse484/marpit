@@ -10,6 +10,7 @@ declare module '@marp-team/marpit' {
     printable?: boolean
     slideContainer?: false | Element | Element[]
     inlineSVG?: boolean
+    video?: boolean
   }
 
   type MarpitHeadingDivider = 1 | 2 | 3 | 4 | 5 | 6

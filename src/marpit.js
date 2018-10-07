@@ -16,6 +16,7 @@ import marpitSlideContainer from './markdown/slide_container'
 import marpitStyleAssign from './markdown/style/assign'
 import marpitStyleParse from './markdown/style/parse'
 import marpitSweep from './markdown/sweep'
+import marpitVideo from './markdown/video'
 
 const defaultOptions = {
   backgroundSyntax: true,
@@ -28,6 +29,7 @@ const defaultOptions = {
   printable: true,
   slideContainer: false,
   inlineSVG: false,
+  video: false,
 }
 
 /**
@@ -61,6 +63,8 @@ class Marpit {
    * @param {false|Element|Element[]} [opts.slideContainer] Container element(s)
    *     wrapping each slide sections.
    * @param {boolean} [opts.inlineSVG=false] Wrap each sections by inline SVG.
+   *     _(Experimental)_
+   * @param {boolean} [opts.video=false] Support video element by image syntax.
    *     _(Experimental)_
    */
   constructor(opts = {}) {
@@ -110,7 +114,7 @@ class Marpit {
 
   /** @private */
   applyMarkdownItPlugins(md = this.markdown) {
-    const { backgroundSyntax, filters, looseYAML } = this.options
+    const { backgroundSyntax, filters, looseYAML, video } = this.options
 
     md.use(marpitComment, { looseYAML })
       .use(marpitStyleParse, this)
@@ -127,6 +131,7 @@ class Marpit {
       .use(marpitStyleAssign, this)
 
     if (backgroundSyntax) md.use(marpitBackgroundImage)
+    if (video) md.use(marpitVideo)
   }
 
   /**
