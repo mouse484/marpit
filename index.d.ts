@@ -18,6 +18,7 @@ declare module '@marp-team/marpit' {
   type MarpitRenderResult = {
     html: string
     css: string
+    comments: string[][]
   }
 
   type ThemeSetPackOptions = {
@@ -37,6 +38,7 @@ declare module '@marp-team/marpit' {
     readonly options: MarpitOptions
     readonly markdownItPlugins: (md: any) => void
 
+    protected lastComments?: MarpitRenderResult['comments']
     protected lastGlobalDirectives?: { [directive: string]: any }
     protected lastStyles?: string[]
 

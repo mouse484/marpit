@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Support Node 10.x and use it for development ([#84](https://github.com/marp-team/marpit/pull/84))
+
+## v0.2.0 - 2018-10-10
+
+### Added
+
+- Collect HTML comments per page to be usable as presenter note ([#82](https://github.com/marp-team/marpit/issues/82), [#83](https://github.com/marp-team/marpit/pull/83))
+
+### Changed
+
+- Update license author to marp-team ([#81](https://github.com/marp-team/marpit/pull/81))
+
 ## v0.1.3 - 2018-10-05
 
 ### Fixed

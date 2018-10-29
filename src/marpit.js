@@ -4,6 +4,7 @@ import ThemeSet from './theme_set'
 import { marpitContainer } from './element'
 import marpitApplyDirectives from './markdown/directives/apply'
 import marpitBackgroundImage from './markdown/background_image'
+import marpitCollectComment from './markdown/collect_comment'
 import marpitComment from './markdown/comment'
 import marpitContainerPlugin from './markdown/container'
 import marpitHeaderAndFooter from './markdown/header_and_footer'
@@ -129,6 +130,7 @@ class Marpit {
       .use(marpitSweep)
       .use(marpitInlineSVG, this)
       .use(marpitStyleAssign, this)
+      .use(marpitCollectComment, this)
 
     if (backgroundSyntax) md.use(marpitBackgroundImage)
     if (video) md.use(marpitVideo)
@@ -138,6 +140,8 @@ class Marpit {
    * @typedef {Object} Marpit~RenderResult
    * @property {string} html Rendered HTML.
    * @property {string} css Rendered CSS.
+   * @property {string[][]} comments Parsed HTML comments per slide pages,
+   *     excepted YAML for directives. It would be useful for presenter notes.
    */
 
   /**
@@ -150,6 +154,7 @@ class Marpit {
     return {
       html: this.renderMarkdown(markdown),
       css: this.renderStyle(this.lastGlobalDirectives.theme),
+      comments: this.lastComments,
     }
   }
 
