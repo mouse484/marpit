@@ -4,7 +4,7 @@ import ThemeSet from './theme_set'
 import { marpitContainer } from './element'
 import marpitApplyDirectives from './markdown/directives/apply'
 import marpitBackgroundImage from './markdown/background_image'
-import marpitCollectComment from './markdown/collect_comment'
+import marpitCollect from './markdown/collect'
 import marpitComment from './markdown/comment'
 import marpitContainerPlugin from './markdown/container'
 import marpitHeaderAndFooter from './markdown/header_and_footer'
@@ -28,6 +28,7 @@ const defaultOptions = {
   looseYAML: false,
   markdown: 'commonmark',
   printable: true,
+  scopedStyle: true,
   slideContainer: false,
   inlineSVG: false,
   video: false,
@@ -61,6 +62,9 @@ class Marpit {
    * @param {string|Object|Array} [opts.markdown='commonmark'] markdown-it
    *     initialize option(s).
    * @param {boolean} [opts.printable=true] Make style printable to PDF.
+   * @param {boolean} [opts.scopedStyle=true] Support scoping inline style to
+   *     the current slide through `<style scoped>` when `inlineStyle` is
+   *     enabled.
    * @param {false|Element|Element[]} [opts.slideContainer] Container element(s)
    *     wrapping each slide sections.
    * @param {boolean} [opts.inlineSVG=false] Wrap each sections by inline SVG.
@@ -115,7 +119,13 @@ class Marpit {
 
   /** @private */
   applyMarkdownItPlugins(md = this.markdown) {
-    const { backgroundSyntax, filters, looseYAML, video } = this.options
+    const {
+      backgroundSyntax,
+      filters,
+      looseYAML,
+      scopedStyle,
+      video,
+    } = this.options
 
     md.use(marpitComment, { looseYAML })
       .use(marpitStyleParse, this)
@@ -129,8 +139,8 @@ class Marpit {
       .use(marpitParseImage, { filters })
       .use(marpitSweep)
       .use(marpitInlineSVG, this)
-      .use(marpitStyleAssign, this)
-      .use(marpitCollectComment, this)
+      .use(marpitStyleAssign, this, { supportScoped: scopedStyle })
+      .use(marpitCollect, this)
 
     if (backgroundSyntax) md.use(marpitBackgroundImage)
     if (video) md.use(marpitVideo)
@@ -138,7 +148,7 @@ class Marpit {
 
   /**
    * @typedef {Object} Marpit~RenderResult
-   * @property {string} html Rendered HTML.
+   * @property {string|string[]} html Rendered HTML.
    * @property {string} css Rendered CSS.
    * @property {string[][]} comments Parsed HTML comments per slide pages,
    *     excepted YAML for directives. It would be useful for presenter notes.
@@ -148,11 +158,14 @@ class Marpit {
    * Render Markdown into HTML and CSS string.
    *
    * @param {string} markdown A Markdown string.
+   * @param {Object} [env] Environment object for passing to markdown-it.
+   * @param {boolean} [env.htmlAsArray=false] Output rendered HTML as array per
+   *     slide.
    * @returns {Marpit~RenderResult} An object of rendering result.
    */
-  render(markdown) {
+  render(markdown, env = {}) {
     return {
-      html: this.renderMarkdown(markdown),
+      html: this.renderMarkdown(markdown, env),
       css: this.renderStyle(this.lastGlobalDirectives.theme),
       comments: this.lastComments,
     }
@@ -166,10 +179,21 @@ class Marpit {
    *
    * @private
    * @param {string} markdown A Markdown string.
-   * @returns {string} The result string of rendering Markdown.
+   * @param {Object} [env] Environment object for passing to markdown-it.
+   * @param {boolean} [env.htmlAsArray=false] Output rendered HTML as array per
+   *     slide.
+   * @returns {string|string[]} The result string(s) of rendering Markdown.
    */
-  renderMarkdown(markdown) {
-    return this.markdown.render(markdown)
+  renderMarkdown(markdown, env = {}) {
+    if (env.htmlAsArray) {
+      this.markdown.parse(markdown, env)
+
+      return this.lastSlideTokens.map(slide =>
+        this.markdown.renderer.render(slide, this.markdown.options, env)
+      )
+    }
+
+    return this.markdown.render(markdown, env)
   }
 
   /**
@@ -193,6 +217,18 @@ class Marpit {
       inlineSVG: this.options.inlineSVG,
       printable: this.options.printable,
     }
+  }
+
+  /**
+   * Load the specified markdown-it plugin with given parameters.
+   *
+   * @param {Function} plugin markdown-it plugin.
+   * @param {...*} params Params to pass into plugin.
+   * @returns {Marpit} The called {@link Marpit} instance for chainable.
+   */
+  use(plugin, ...params) {
+    plugin.call(this.markdown, this.markdown, ...params)
+    return this
   }
 }
 

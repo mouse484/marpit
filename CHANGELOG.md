@@ -4,7 +4,114 @@
 
 ### Changed
 
-- Support Node 10.x and use it for development ([#84](https://github.com/marp-team/marpit/pull/84))
+- Small update for README and docs ([#122](https://github.com/marp-team/marpit/pull/122))
+
+## v0.6.0 - 2019-01-19
+
+### Added
+
+- Add `env` argument to [`Marpit.render()`](https://marpit-api.marp.app/marpit#render) ([#118](https://github.com/marp-team/marpit/pull/118))
+- Output HTML per slide page as array by passing `htmlAsArray` env ([#112](https://github.com/marp-team/marpit/issues/112), [#119](https://github.com/marp-team/marpit/pull/119))
+- Update docs to explain SVG slide polyfill ([#117](https://github.com/marp-team/marpit/pull/117))
+- Update docs to explain usage of plugin ([#120](https://github.com/marp-team/marpit/pull/120))
+
+### Changed
+
+- Upgrade dependent packages to latest version ([#121](https://github.com/marp-team/marpit/pull/121))
+
+## v0.5.0 - 2018-12-28
+
+### Added
+
+- Support setting background color by Markdown image syntax ([#92](https://github.com/marp-team/marpit/issues/92), [#113](https://github.com/marp-team/marpit/pull/113))
+- Add `data-marpit-svg` attribute to SVG element outputted by inline SVG mode ([#115](https://github.com/marp-team/marpit/pull/115))
+
+### Fixed
+
+- Fix remaining orphan break by sweeping hidden inline token forcibly ([#114](https://github.com/marp-team/marpit/pull/114))
+
+### Changed
+
+- Upgrade Node and dependent packages to latest version ([#116](https://github.com/marp-team/marpit/pull/116))
+
+## v0.4.1 - 2018-12-18
+
+### Fixed
+
+- Prevent leaking header and footer when printing by added normalization of HTML background ([#108](https://github.com/marp-team/marpit/pull/108), [#109](https://github.com/marp-team/marpit/pull/109))
+- Fix the version badge in docs sidebar ([#110](https://github.com/marp-team/marpit/pull/110))
+
+### Changed
+
+- Upgrade Node and dependent packages to latest version ([#111](https://github.com/marp-team/marpit/pull/111))
+
+## v0.4.0 - 2018-12-02
+
+### Added
+
+- Add `use` method to extend markdown-it parser by plugin ([#105](https://github.com/marp-team/marpit/pull/105))
+
+### Changed
+
+- Upgrade dependent packages to latest version ([#106](https://github.com/marp-team/marpit/pull/106))
+
+## v0.3.3 - 2018-11-30
+
+### Fixed
+
+- Revert resolutions for `ajv` ([#102](https://github.com/marp-team/marpit/pull/102))
+- Fix over-scoped selectors injected by printable plugin ([#104](https://github.com/marp-team/marpit/pull/104))
+
+### Added
+
+- Run `yarn audit` while running CI / publish processes ([#103](https://github.com/marp-team/marpit/pull/103))
+
+## v0.3.2 - 2018-11-29
+
+### Fixed
+
+- Disable CSS scoping into declarations within `@keyframes` at-rule ([#97](https://github.com/marp-team/marpit/issues/97), [#99](https://github.com/marp-team/marpit/pull/99))
+
+### Changed
+
+- Disable styling `html` and `body` elements through theme CSS ([#98](https://github.com/marp-team/marpit/issues/98), [#100](https://github.com/marp-team/marpit/pull/100))
+- Upgrade dependent packages to latest version ([#101](https://github.com/marp-team/marpit/pull/101))
+
+## v0.3.1 - 2018-11-24
+
+### Security
+
+- Upgrade dependent packages to prevent the malicious attack in dependencies ([#96](https://github.com/marp-team/marpit/pull/96))
+
+## v0.3.0 - 2018-11-14
+
+### Breaking
+
+- No longer work with Node v6.14.2 and v6.14.3 ([#93](https://github.com/marp-team/marpit/pull/93))
+
+### Added
+
+- Add docsify style and its build script ([#91](https://github.com/marp-team/marpit/issues/91), [#93](https://github.com/marp-team/marpit/pull/93))
+- Support the scoped inline style through `<style scoped>` ([#85](https://github.com/marp-team/marpit/issues/85), [#94](https://github.com/marp-team/marpit/pull/94))
+
+### Changed
+
+- Upgrade dependent packages to latest version ([#95](https://github.com/marp-team/marpit/pull/95))
+
+## v0.2.1 - 2018-11-05
+
+### Changed
+
+- Support Node 10.x and use its LTS for development ([#84](https://github.com/marp-team/marpit/pull/84), [#88](https://github.com/marp-team/marpit/pull/88))
+- Upgrade dependent packages to latest version ([#90](https://github.com/marp-team/marpit/pull/90))
+
+### Fixed
+
+- Fix docs to work docsify scripts correctly ([#89](https://github.com/marp-team/marpit/pull/89))
+
+### Removed
+
+- Remove `defer` attribute from `<inline>` script tag on docs ([#87](https://github.com/marp-team/marpit/pull/87))
 
 ## v0.2.0 - 2018-10-10
 

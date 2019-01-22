@@ -82,6 +82,28 @@ describe('Marpit', () => {
       })
     })
 
+    context('with env argument', () => {
+      it('passes env option to markdown#render', () => {
+        const instance = new Marpit()
+        const render = jest.spyOn(instance.markdown, 'render')
+
+        instance.render('Markdown', { env: 'env' })
+        expect(render).toBeCalledWith('Markdown', { env: 'env' })
+      })
+
+      context('when passed htmlAsArray prop as true', () => {
+        it('outputs HTML as array per slide', () => {
+          const { html } = new Marpit().render('# Page1\n***\n## Page2', {
+            htmlAsArray: true,
+          })
+
+          expect(html).toHaveLength(2)
+          expect(cheerio.load(html[0])('section#1 > h1')).toHaveLength(1)
+          expect(cheerio.load(html[1])('section#2 > h2')).toHaveLength(1)
+        })
+      })
+    })
+
     context('with inlineSVG option', () => {
       const instance = inlineSVG => {
         const marpit = new Marpit({ inlineSVG })
@@ -221,14 +243,41 @@ describe('Marpit', () => {
         expect(style).not.toContain('color:#123;')
       })
     })
+
+    context('with scopedStyle option', () => {
+      const markdown = '<style scoped>a { color: #00c; }</style>'
+      const instance = scopedStyle =>
+        new Marpit({ scopedStyle, inlineStyle: true })
+
+      it('allows scoping inline style through <style scoped> when scopedStyle is true', () => {
+        const { html, css } = instance(true).render(markdown)
+        const $ = cheerio.load(html)
+
+        expect(css).toContain('[data-marpit-scope-')
+        expect(Object.keys($('section').attr())).toContainEqual(
+          expect.stringMatching(/^data-marpit-scope-/)
+        )
+      })
+
+      it('disallows scoping inline style through <style scoped> when scopedStyle is false', () => {
+        const { html, css } = instance(false).render(markdown)
+        const $ = cheerio.load(html)
+
+        expect(css).not.toContain('[data-marpit-scope-')
+        expect(Object.keys($('section').attr())).not.toContainEqual(
+          expect.stringMatching(/^data-marpit-scope-/)
+        )
+      })
+    })
   })
 
   describe('#renderMarkdown', () => {
     it('returns the result of markdown#render', () => {
       const instance = new Marpit()
-      instance.markdown.render = md => `test of ${md}`
+      const spy = jest.spyOn(instance.markdown, 'render').mockImplementation()
 
-      expect(instance.renderMarkdown('render')).toBe('test of render')
+      instance.renderMarkdown('render', { env: 'env' })
+      expect(spy).toBeCalledWith('render', { env: 'env' })
     })
   })
 
@@ -244,6 +293,20 @@ describe('Marpit', () => {
       }
 
       expect(instance.renderStyle('test-theme')).toBe('style of test-theme')
+    })
+  })
+
+  describe('#use', () => {
+    it('extends markdown-it parser by passed plugin', () => {
+      const instance = new Marpit()
+      const plugin = jest.fn((md, param) => {
+        md.extended = param
+      })
+
+      expect(instance.use(plugin, 'parameter')).toBe(instance)
+      expect(plugin).toBeCalledTimes(1)
+      expect(plugin).toBeCalledWith(instance.markdown, 'parameter')
+      expect(instance.markdown.extended).toBe('parameter')
     })
   })
 })

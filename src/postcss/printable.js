@@ -1,6 +1,14 @@
 /** @module */
 import postcss from 'postcss'
 
+const marpitPrintContainerStyle = `
+html, body {
+  background-color: #fff;
+  margin: 0;
+  page-break-inside: avoid;
+}
+`.trim()
+
 /**
  * Marpit PostCSS printable plugin.
  *
@@ -11,7 +19,11 @@ import postcss from 'postcss'
  * @param {string} opts.height
  * @alias module:postcss/printable
  */
-const plugin = postcss.plugin('marpit-postcss-printable', opts => css =>
+const plugin = postcss.plugin('marpit-postcss-printable', opts => css => {
+  css.walkAtRules('media', rule => {
+    if (rule.params === 'marpit-print') rule.remove()
+  })
+
   css.first.before(
     `
 @page {
@@ -19,12 +31,7 @@ const plugin = postcss.plugin('marpit-postcss-printable', opts => css =>
   margin: 0;
 }
 
-@media print {
-  html, body {
-    margin: 0;
-    page-break-inside: avoid;
-  }
-
+@media marpit-print {
   section {
     page-break-before: always;
   }
@@ -34,7 +41,7 @@ const plugin = postcss.plugin('marpit-postcss-printable', opts => css =>
     color-adjust: exact !important;
   }
 
-  :marpit-container > svg {
+  :marpit-container > svg[data-marpit-svg] {
     display: block;
     height: 100vh;
     width: 100vw;
@@ -42,6 +49,22 @@ const plugin = postcss.plugin('marpit-postcss-printable', opts => css =>
 }
 `.trim()
   )
+})
+
+/**
+ * The post-process PostCSS plugin of Marpit printable plugin.
+ *
+ * @alias module:postcss/printable.postprocess
+ */
+export const postprocess = postcss.plugin(
+  'marpit-postcss-printable-postprocess',
+  () => css =>
+    css.walkAtRules('media', rule => {
+      if (rule.params !== 'marpit-print') return
+
+      rule.params = 'print'
+      rule.first.before(marpitPrintContainerStyle)
+    })
 )
 
 export default plugin

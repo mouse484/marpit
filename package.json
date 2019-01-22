@@ -1,6 +1,6 @@
 {
   "name": "@marp-team/marpit",
-  "version": "0.2.0",
+  "version": "0.6.0",
   "description": "The skinny framework for creating slide deck from Markdown",
   "license": "MIT",
   "author": {
@@ -27,7 +27,7 @@
     "url": "https://github.com/marp-team/marpit"
   },
   "engines": {
-    "node": ">=6.14.2"
+    "node": ">=6.14.4"
   },
   "main": "lib/index.js",
   "types": "index.d.ts",
@@ -37,51 +37,68 @@
   ],
   "scripts": {
     "build": "yarn --mutex file run clean && babel src --out-dir lib",
+    "check-audit": "yarn --mutex file audit",
     "clean": "rimraf lib",
-    "docs": "docsify serve ./docs",
-    "format": "prettier **/*.{json,md,ts,yaml,yml}",
-    "format:check": "yarn --mutex file run format -l",
+    "docs": "npm-run-all --npm-path yarn --parallel docsify docsify:style:watch",
+    "docsify": "docsify serve ./docs",
+    "docsify:style": "node ./docsify/build.js",
+    "docsify:style:watch": "nodemon -q -e .scss,.js -w ./docsify ./docsify/build.js",
+    "format": "prettier \"**/*.{css,html,js,json,md,scss,ts,yaml,yml}\"",
+    "format:check": "yarn --silent --mutex file run format -l",
     "jsdoc": "rimraf jsdoc && jsdoc src -c .jsdoc.json",
-    "lint": "eslint",
-    "lint:all": "eslint .",
-    "prepack": "npm-run-all --npm-path yarn --parallel format:check lint:all test:coverage --sequential build",
-    "preversion": "npm-run-all --npm-path yarn --parallel format:check lint:all test:coverage",
+    "lint:js": "eslint .",
+    "lint:css": "stylelint \"./**/*.{css,scss}\"",
+    "prepack": "npm-run-all --npm-path yarn --parallel check-audit format:check lint:* test:coverage --sequential build",
+    "preversion": "npm-run-all --npm-path yarn --parallel check-audit format:check lint:* test:coverage",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "version": "node version.js && git add -A CHANGELOG.md",
     "watch": "babel src --out-dir lib -w --verbose"
   },
   "devDependencies": {
-    "@babel/cli": "^7.1.2",
-    "@babel/core": "^7.1.2",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "autoprefixer": "^9.4.5",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
     "cheerio": "^1.0.0-rc.2",
     "codecov": "^3.1.0",
     "cross-env": "^5.2.0",
+    "cssnano": "^4.1.8",
     "dedent": "^0.7.0",
-    "docsify-cli": "^4.2.1",
-    "eslint": "^5.6.1",
+    "docsify-cli": "^4.3.0",
+    "docsify-themeable": "^0.6.1",
+    "eslint": "^5.12.1",
     "eslint-config-airbnb-base": "13.1.0",
-    "eslint-config-prettier": "^3.1.0",
+    "eslint-config-prettier": "^3.5.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-prettier": "^3.0.0",
     "jest": "^23.6.0",
-    "jest-junit": "^5.2.0",
+    "jest-junit": "^6.0.1",
     "jsdoc": "^3.5.5",
     "minami": "^1.2.3",
-    "npm-run-all": "^4.1.3",
-    "prettier": "^1.14.3",
-    "rimraf": "^2.6.2"
+    "mkdirp": "^0.5.1",
+    "node-sass": "^4.11.0",
+    "nodemon": "^1.18.9",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.15.3",
+    "rimraf": "^2.6.3",
+    "stylelint": "^9.10.1",
+    "stylelint-config-prettier": "^4.0.0",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-scss": "^3.5.1"
   },
   "dependencies": {
-    "js-yaml": "^3.12.0",
+    "color-string": "^1.5.3",
+    "js-yaml": "^3.12.1",
     "lodash.kebabcase": "^4.1.1",
     "markdown-it": "^8.4.2",
     "markdown-it-front-matter": "^0.1.2",
-    "postcss": "^7.0.5"
+    "postcss": "^7.0.13"
+  },
+  "resolutions": {
+    "ip-regex": "~2.1.0"
   },
   "publishConfig": {
     "access": "public"
