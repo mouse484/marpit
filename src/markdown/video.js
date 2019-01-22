@@ -21,6 +21,9 @@ function video(md) {
 
           const altAttrIdx = t.attrIndex('alt')
           if (altAttrIdx >= 0) t.attrs.splice(altAttrIdx, 1)
+
+          t.attrSet('playsinline', '')
+          t.attrSet('controls', '')
         }
       }
     }
